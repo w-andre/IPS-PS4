@@ -131,7 +131,7 @@ class PS4 extends IPSModule
     public function Register(int $pincode)
     {
         $this->Connect();
-        IPS_Sleep(400);
+        IPS_Sleep(600);
         $this->_send_login_request($pincode);
         IPS_Sleep(500);
         //$this->Close();
@@ -148,12 +148,14 @@ class PS4 extends IPSModule
 
     public function Standby()
     {
-        $this->Connect();
-        IPS_Sleep(400);
-        $this->_send_login_request();
-        IPS_Sleep(100);
-        $this->_send_standby_request();
-        //$this->Close();
+        if ($this->Connect()) {
+            $this->SendDebug(__FUNCTION__ . 'Standby ???', '???', 0);
+            IPS_Sleep(400);
+            $this->_send_login_request();
+            IPS_Sleep(100);
+            $this->_send_standby_request();
+            //$this->Close();
+        }
     }
 
     public function StartTitle(string $title_id)
@@ -342,7 +344,7 @@ class PS4 extends IPSModule
 
     public function GetConfigurationForParent()
     {
-        $JsonArray = array('Host' => $this->ReadPropertyString('IP'), 'Port' => 997, 'Open' => false);
+        $JsonArray = array('Host' => $this->ReadPropertyString('IP'), 'Port' => 997, 'Open' => IPS_GetProperty(IPS_GetInstance($this->InstanceID)['ConnectionID'], 'Open'));
         $Json = json_encode($JsonArray);
         return $Json;
     }
